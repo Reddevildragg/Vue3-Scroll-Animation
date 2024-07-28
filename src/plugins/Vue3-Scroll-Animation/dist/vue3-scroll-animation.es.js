@@ -1,45 +1,29 @@
-const m = {
-  mounted(e, c) {
-    const { value: u } = c, { enterClass: s, leaveClass: l, delay: n = 0, playOnce: t = !1, threshold: v = 0.25 } = u;
-    let r = !1, i = !1, o;
-    const a = () => {
-      i = !0, clearTimeout(o), o = setTimeout(() => {
-        i = !1;
-      }, 100);
+const v = {
+  mounted(s, u) {
+    const { value: d } = u, { enterClass: i, leaveClass: t, delay: n = 0, playOnce: e = !1, offset: f = 0.1, leaveAtTop: m = !1 } = d;
+    let a = !1;
+    const o = () => {
+      const l = s.getBoundingClientRect(), c = window.innerHeight, r = c * f;
+      l.top <= c - r ? m && l.top <= r && !e && t ? setTimeout(() => {
+        s.classList.contains(t) || (s.classList.add(t), s.classList.remove(i));
+      }, n) : (!e || e && !a) && setTimeout(() => {
+        s.classList.contains(i) || (s.classList.add(i), s.classList.remove(t)), e && (a = !0);
+      }, n) : !e && t && setTimeout(() => {
+        s.classList.contains(t) || (s.classList.add(t), s.classList.remove(i));
+      }, n);
     };
-    window.addEventListener("scroll", a);
-    const _ = new IntersectionObserver(
-      (d) => {
-        d.forEach((f) => {
-          if (f.isIntersecting) {
-            if (!i)
-              return;
-            (!t || t && !r) && s && setTimeout(() => {
-              e.classList.add(s), e.classList.remove(l);
-            }, n), t && (r = !0);
-          } else
-            !t && i && (s && e.classList.remove(s), l && setTimeout(() => {
-              e.classList.add(l);
-            }, n));
-        });
-      },
-      {
-        threshold: v
-        // Default threshold is 0.25
-      }
-    );
-    _.observe(e), e.__vueObserver__ = _, e.__vueScrollCleanup__ = () => {
-      window.removeEventListener("scroll", a);
+    window.addEventListener("scroll", o), o(), s.style.animationDuration = "0.001s", setTimeout(() => s.style.animationDuration = "", 1e3), s.__vueScrollCleanup__ = () => {
+      window.removeEventListener("scroll", o);
     };
   },
-  unmounted(e) {
-    e.__vueObserver__ && (e.__vueObserver__.disconnect(), delete e.__vueObserver__), e.__vueScrollCleanup__ && (e.__vueScrollCleanup__(), delete e.__vueScrollCleanup__);
+  unmounted(s) {
+    s.__vueScrollCleanup__ && (s.__vueScrollCleanup__(), delete s.__vueScrollCleanup__);
   }
-}, b = {
-  install(e) {
-    e.directive("animate-in-view", m);
+}, _ = {
+  install(s) {
+    console.log("installing Vue3ScrollAnimation"), s.directive("animate-in-view", v);
   }
 };
 export {
-  b as default
+  _ as default
 };

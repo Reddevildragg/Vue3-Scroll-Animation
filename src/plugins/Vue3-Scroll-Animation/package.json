@@ -6,7 +6,8 @@
   "module": "dist/vue3-scroll-animation.es.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "vite build"
+    "build": "vite build",
+    "link": "vite build && npm link"
   },
   "files": [
     "dist",

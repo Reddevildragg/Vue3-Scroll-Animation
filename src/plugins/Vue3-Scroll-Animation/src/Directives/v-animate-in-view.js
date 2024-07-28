@@ -1,74 +1,58 @@
-// v-animate-in-view.js
 export default {
     mounted(el, binding) {
-        const { value } = binding;
-        const { enterClass, leaveClass, delay = 0, playOnce = false, threshold = 0.25 } = value;
+        const {value} = binding;
+        const {enterClass, leaveClass, delay = 0, playOnce = false, offset = 0.1, leaveAtTop = false} = value;
 
         let hasPlayed = false;
-        let isScrolling = false;
-        let scrollTimeout;
 
-        const handleScroll = () => {
-            isScrolling = true;
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(() => {
-                isScrolling = false;
-            }, 100);
+        const checkVisibility = () => {
+            const rect = el.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            const offsetPx = viewportHeight * offset;
+
+            if (rect.top <= viewportHeight - offsetPx) {
+                if (leaveAtTop && rect.top <= offsetPx && !playOnce && leaveClass) {
+                    setTimeout(() => {
+                        if (!el.classList.contains(leaveClass)) {
+                            el.classList.add(leaveClass);
+                            el.classList.remove(enterClass);
+                        }
+                    }, delay);
+                } else {
+                    if (!playOnce || (playOnce && !hasPlayed)) {
+                        setTimeout(() => {
+                            if (!el.classList.contains(enterClass)) {
+                                el.classList.add(enterClass);
+                                el.classList.remove(leaveClass);
+                            }
+                            if (playOnce) {
+                                hasPlayed = true;
+                            }
+                        }, delay);
+                    }
+                }
+            } else if (!playOnce && leaveClass) {
+                setTimeout(() => {
+                    if (!el.classList.contains(leaveClass)) {
+                        el.classList.add(leaveClass);
+                        el.classList.remove(enterClass);
+                    }
+                }, delay);
+            }
         };
 
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', checkVisibility);
+        checkVisibility();
 
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        if (!isScrolling) return;
+        //TODO:need to find a better way to do this and get the default animation in the right state
+        el.style.animationDuration = '0.001s';
+        setTimeout(() => el.style.animationDuration = '', 1000);
 
-                        if (!playOnce || (playOnce && !hasPlayed)) {
-                            if (enterClass) {
-                                setTimeout(() => {
-                                    el.classList.add(enterClass);
-                                    el.classList.remove(leaveClass);
-                                }, delay);
-                            }
-                        }
-                        if (playOnce) {
-                            hasPlayed = true;
-                        }
-                    } else {
-                        if (!playOnce && isScrolling) {
-                            if (enterClass) {
-                                el.classList.remove(enterClass);
-                            }
-                            if (leaveClass) {
-                                setTimeout(() => {
-                                    el.classList.add(leaveClass);
-                                }, delay);
-                            }
-                        }
-                    }
-                });
-            },
-            {
-                threshold: threshold, // Default threshold is 0.25
-            }
-        );
-
-        observer.observe(el);
-
-        // Save the observer instance to the element
-        el.__vueObserver__ = observer;
-
-        // Clean up
         el.__vueScrollCleanup__ = () => {
-            window.removeEventListener('scroll', handleScroll);
+            window.removeEventListener('scroll', checkVisibility);
         };
     },
     unmounted(el) {
-        if (el.__vueObserver__) {
-            el.__vueObserver__.disconnect();
-            delete el.__vueObserver__;
-        }
         if (el.__vueScrollCleanup__) {
             el.__vueScrollCleanup__();
             delete el.__vueScrollCleanup__;
