@@ -1,27 +1,27 @@
-const v = {
-  mounted(s, u) {
-    const { value: d } = u, { enterClass: i, leaveClass: t, delay: n = 0, playOnce: e = !1, offset: f = 0.1, leaveAtTop: m = !1 } = d;
+const f = {
+  mounted(e, d) {
+    const { value: u } = d, { enterClass: n, leaveClass: s, delay: o = 0, playOnce: t = !1, offset: v = 0.1, leaveAtTop: m = !1 } = u;
     let a = !1;
-    const o = () => {
-      const l = s.getBoundingClientRect(), c = window.innerHeight, r = c * f;
-      l.top <= c - r ? m && l.top <= r && !e && t ? setTimeout(() => {
-        s.classList.contains(t) || (s.classList.add(t), s.classList.remove(i));
-      }, n) : (!e || e && !a) && setTimeout(() => {
-        s.classList.contains(i) || (s.classList.add(i), s.classList.remove(t)), e && (a = !0);
-      }, n) : !e && t && setTimeout(() => {
-        s.classList.contains(t) || (s.classList.add(t), s.classList.remove(i));
-      }, n);
+    const i = () => {
+      const l = e.getBoundingClientRect(), c = window.innerHeight, r = c * v;
+      l.top <= c - r ? m && l.top <= r && !t && s ? setTimeout(() => {
+        e.classList.contains(s) || (e.classList.add(s), e.classList.remove(n));
+      }, o) : (!t || t && !a) && setTimeout(() => {
+        e.classList.contains(n) || (e.classList.add(n), e.classList.remove(s)), t && (a = !0);
+      }, o) : !t && s && setTimeout(() => {
+        e.classList.contains(s) || (e.classList.add(s), e.classList.remove(n));
+      }, o);
     };
-    window.addEventListener("scroll", o), o(), s.style.animationDuration = "0.001s", setTimeout(() => s.style.animationDuration = "", 1e3), s.__vueScrollCleanup__ = () => {
-      window.removeEventListener("scroll", o);
+    window.addEventListener("scroll", i), window.addEventListener("resize", i), i(), e.style.animationDuration = "0.001s", setTimeout(() => e.style.animationDuration = "", 1e3), e.__vueScrollCleanup__ = () => {
+      window.removeEventListener("scroll", i), window.removeEventListener("resize", i);
     };
   },
-  unmounted(s) {
-    s.__vueScrollCleanup__ && (s.__vueScrollCleanup__(), delete s.__vueScrollCleanup__);
+  unmounted(e) {
+    e.__vueScrollCleanup__ && (e.__vueScrollCleanup__(), delete e.__vueScrollCleanup__);
   }
 }, _ = {
-  install(s) {
-    console.log("installing Vue3ScrollAnimation"), s.directive("animate-in-view", v);
+  install(e) {
+    console.log("installing Vue3ScrollAnimation"), e.directive("animate-in-view", f);
   }
 };
 export {

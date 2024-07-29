@@ -42,6 +42,7 @@ export default {
         };
 
         window.addEventListener('scroll', checkVisibility);
+        window.addEventListener('resize', checkVisibility);
         checkVisibility();
 
         //TODO:need to find a better way to do this and get the default animation in the right state
@@ -50,6 +51,7 @@ export default {
 
         el.__vueScrollCleanup__ = () => {
             window.removeEventListener('scroll', checkVisibility);
+            window.removeEventListener('resize', checkVisibility);
         };
     },
     unmounted(el) {
